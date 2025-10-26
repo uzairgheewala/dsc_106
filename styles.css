@@ -142,6 +142,36 @@ form button {
     grid-column: 1 / -1;
 }
 
+form label>textarea {
+    grid-column: 2;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.55rem 0.6rem;
+    /* comfortable hit area */
+    border: 1px solid color-mix(in oklch, canvastext, canvas 70%);
+    border-radius: 0.5rem;
+}
+
+/* Textarea breathing room */
+form label>textarea {
+    min-height: 9rem;
+    resize: vertical;
+    line-height: 1.4;
+}
+
+/* Make the button a normal size and align left under the fields */
+form button {
+    grid-column: 2;
+    /* sit under the inputs (right column) */
+    justify-self: start;
+    /* shrink to content size */
+    padding: 0.55rem 0.9rem;
+    border: 1px solid color-mix(in oklch, canvastext, canvas 70%);
+    border-radius: 0.5rem;
+    background: color-mix(in oklch, var(--color-accent), canvas 85%);
+    cursor: pointer;
+}
+
 .projects {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
