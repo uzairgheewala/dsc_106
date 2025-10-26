@@ -79,3 +79,44 @@ nav a {
 figure {
     margin: 1rem 0;
 }
+
+input,
+textarea,
+button {
+    font: inherit;
+    /* inherit font family + size + line-height */
+}
+
+form label {
+    display: grid;
+    grid-template-columns: subgrid;
+    /* adopt parent columns */
+    grid-column: 1 / -1;
+    /* each label group spans both columns */
+}
+
+form input,
+form textarea,
+form button {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+form {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    /* label column sized to text; field column takes rest */
+    gap: 1em;
+}
+
+/* Inputs & textareas occupy the second column; the label text sits in the first */
+form label>input,
+form label>textarea {
+    grid-column: 2;
+}
+
+/* Button spans full width */
+form button {
+    grid-column: 1 / -1;
+}
