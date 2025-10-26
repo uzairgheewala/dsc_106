@@ -1,0 +1,28 @@
+body {
+    /* 100% = browser default size; 1.5 = comfortable reading line height */
+    font: 100%/1.5 system-ui;
+    margin: 0;
+    padding: 0 1rem;
+}
+
+/* Small, nice-to-have touches that don’t conflict with the lab’s ask */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+header,
+main,
+footer {
+    max-width: 70ch;
+    margin: 1.5rem auto;
+}
+
+nav a {
+    margin-right: 0.75rem;
+}
+
+figure {
+    margin: 1rem 0;
+}
