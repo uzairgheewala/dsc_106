@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uzair Gheewala: Personal site and portfolio</title>
+    <meta name="description" content="Personal site and portfolio" />
+</head>
+<body>
+    <header>
+        <h1>Uzair Gheewala</h1>
+        <p>
+            Hi! I'm a DSC 106 student building this site as part of its Labs.
+            I'll use it to share projects, a simple contact form, and a CV page.
+        </p>
+    </header>
+    
+    <main>
+        <section>
+            <h2>About this site</h2>
+            <p>
+                This page is a starting point—pure HTML for now. We'll add styles,
+                more pages, navigation, a photo, and a basic contact form as we go.
+            </p>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; <span id="year"></span> Uzair Gheewala</p>
+        <script>
+            // tiny progressive enhancement: fill in the year
+            document.getElementById('year').textContent = new Date().getFullYear();
+        </script>
+    </footer>
+</body>
+</html>
