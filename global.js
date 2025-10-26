@@ -61,3 +61,49 @@ export function $$(selector, context = document) {
     nav.append(a);
   }
 })();
+
+// Step 4.2: inject the theme switcher (Automatic / Light / Dark)
+(function addColorSchemeSwitcher() {
+  document.body.insertAdjacentHTML(
+    "afterbegin",
+    `
+    <label class="color-scheme">
+      Theme:
+      <select>
+        <option value="light dark">Automatic</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </label>
+  `
+  );
+})();
+
+// Step 4.4: wire up the switcher
+(function wireColorScheme() {
+  const select = document.querySelector(".color-scheme select");
+  if (!select) return;
+
+  // Helper to set the inline color-scheme on <html>
+  const setColorScheme = (value) => {
+    document.documentElement.style.setProperty("color-scheme", value);
+  };
+
+  // Load saved preference if present
+  const saved = localStorage.getItem("colorScheme");
+  if (saved) {
+    setColorScheme(saved);
+    select.value = saved;
+  } else {
+    // Default to Automatic
+    select.value = "light dark";
+  }
+
+  // React to user selection
+  select.addEventListener("input", (event) => {
+    const value = event.target.value; // "light dark" | "light" | "dark"
+    setColorScheme(value);
+    // 4.5 – persist
+    localStorage.setItem("colorScheme", value);
+  });
+})();
