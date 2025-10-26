@@ -1,6 +1,6 @@
 console.log("IT’S ALIVE!");
 
-import { $$ } from "/dsc_106/global.js"; // self-import is a no-op in modern bundlers but safe to omit;
+//import { $$ } from "/dsc_106/global.js"; // self-import is a no-op in modern bundlers but safe to omit;
 // we already exported $$ above; we can just use it directly since we're in the same module.
 
 /** $$: querySelectorAll → real Array */
