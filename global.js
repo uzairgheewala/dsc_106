@@ -8,12 +8,8 @@ console.log("IT’S ALIVE!");
 //   return Array.from(context.querySelectorAll(selector));
 // }
 
-// Define a local, module-scoped helper (no export)
-const qsAll =
-  (selector, context = document) => Array.from(context.querySelectorAll(selector));
-
-// (optional) if you keep older code that still calls $$, safely alias once:
-const $$ = typeof $$ === "undefined" ? qsAll : $$;  // no-op if already defined
+const $$ = (selector, context = document) =>
+  Array.from((context || document).querySelectorAll(selector));
 
 // Step 2: automatic current page link (for Lab 2 hard-coded nav)
 (function currentLinkHighlight() {
