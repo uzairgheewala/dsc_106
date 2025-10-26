@@ -62,48 +62,46 @@ export function $$(selector, context = document) {
   }
 })();
 
-// Step 4.2: inject the theme switcher (Automatic / Light / Dark)
+// === Step 4.2: inject the theme switcher INSIDE the nav ===
 (function addColorSchemeSwitcher() {
-  document.body.insertAdjacentHTML(
-    "afterbegin",
-    `
-    <label class="color-scheme">
-      Theme:
-      <select>
-        <option value="light dark">Automatic</option>
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-      </select>
-    </label>
-  `
-  );
+  const nav = document.querySelector("nav");
+  if (!nav) return;
+
+  const label = document.createElement("label");
+  label.className = "color-scheme";
+  label.innerHTML = `
+    Theme:
+    <select>
+      <option value="light dark">Automatic</option>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+  `;
+  nav.append(label); // put it at the end, aligned right via CSS
 })();
 
-// Step 4.4: wire up the switcher
+// === Step 4.4/4.5: make it work + persist ===
 (function wireColorScheme() {
   const select = document.querySelector(".color-scheme select");
   if (!select) return;
 
-  // Helper to set the inline color-scheme on <html>
   const setColorScheme = (value) => {
+    // override on <html>
     document.documentElement.style.setProperty("color-scheme", value);
   };
 
-  // Load saved preference if present
   const saved = localStorage.getItem("colorScheme");
   if (saved) {
     setColorScheme(saved);
     select.value = saved;
   } else {
-    // Default to Automatic
-    select.value = "light dark";
+    select.value = "light dark"; // auto
   }
 
-  // React to user selection
-  select.addEventListener("input", (event) => {
+  // Use 'change' for selects
+  select.addEventListener("change", (event) => {
     const value = event.target.value; // "light dark" | "light" | "dark"
     setColorScheme(value);
-    // 4.5 – persist
     localStorage.setItem("colorScheme", value);
   });
 })();

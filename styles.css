@@ -40,15 +40,17 @@ nav li {
 
 nav {
     display: flex;
-    gap: 0;
+    align-items: center;
+    /* NEW: vertically center items */
+    gap: 0.5rem;
+    /* small gap between items */
     margin-block-end: 1rem;
-    border-bottom: 1px solid oklch(80% 3% 200);
-    /* subtle cool gray underline */
     --border-color: oklch(50% 10% 200 / 40%);
+    border-bottom: 1px solid var(--border-color);
 }
 
 nav a {
-    flex: 1;
+    flex: 1 1 0;
     /* equal width for each link */
     display: block;
     /* ensures padding fills the flex area */
@@ -198,9 +200,12 @@ form button {
 
 /* Theme switcher placement */
 .color-scheme {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
+    position: static;
+    /* remove absolute */
+    margin-left: auto;
+    /* push to right edge */
+    flex: 0 0 auto;
+    /* don't grow, don't shrink */
     font-size: 80%;
     background: color-mix(in oklch, canvas, canvastext 2%);
     padding: 0.4rem 0.6rem;
