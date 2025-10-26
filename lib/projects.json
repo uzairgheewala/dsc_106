@@ -1,0 +1,14 @@
+[
+  { "title": "Project One",   "year": "2023", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project one." },
+  { "title": "Project Two",   "year": "2024", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project two." },
+  { "title": "Project Three", "year": "2022", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project three." },
+  { "title": "Project Four",  "year": "2024", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project four." },
+  { "title": "Project Five",  "year": "2021", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project five." },
+  { "title": "Project Six",   "year": "2024", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project six." },
+  { "title": "Project Seven", "year": "2020", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project seven." },
+  { "title": "Project Eight", "year": "2023", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project eight." },
+  { "title": "Project Nine",  "year": "2022", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project nine." },
+  { "title": "Project Ten",   "year": "2021", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project ten." },
+  { "title": "Project Eleven","year": "2023", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project eleven." },
+  { "title": "Project Twelve","year": "2020", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project twelve." }
+]

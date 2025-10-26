@@ -130,3 +130,54 @@ const $$ = (selector, context = document) =>
     location.href = url;
   });
 })();
+
+// ---------- Lab 4: data utilities ----------
+export async function fetchJSON(url) {
+  try {
+    const response = await fetch(url, { headers: { "Accept": "application/json" }});
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("Error fetching or parsing JSON:", err);
+    return null; // caller can handle null
+  }
+}
+
+/**
+ * Render a list of projects into a container.
+ * @param {Array<Object>} projects - [{title,year,image,description}, ...]
+ * @param {HTMLElement} container - where to render
+ * @param {string} headingLevel - "h2" | "h3" | ...
+ */
+export function renderProjects(projects, container, headingLevel = "h2") {
+  if (!container) {
+    console.warn("renderProjects: container not found");
+    return;
+  }
+  // Basic validation
+  const validHeading = /^h[1-6]$/.test(headingLevel) ? headingLevel : "h2";
+
+  container.innerHTML = ""; // clear previous content
+
+  if (!Array.isArray(projects) || projects.length === 0) {
+    container.innerHTML = `<p>No projects to display yet.</p>`;
+    return;
+  }
+
+  for (const p of projects) {
+    const article = document.createElement("article");
+    const safeTitle = p?.title ?? "Untitled Project";
+    const safeImg   = p?.image ?? "https://vis-society.github.io/labs/2/images/empty.svg";
+    const safeDesc  = p?.description ?? "";
+
+    article.innerHTML = `
+      <${validHeading}>${safeTitle}</${validHeading}>
+      <img src="${safeImg}" alt="${safeTitle}">
+      <p>${safeDesc}</p>
+    `;
+    container.appendChild(article);
+  }
+}
