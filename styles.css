@@ -168,3 +168,26 @@ form button {
 .projects h2 {
     margin: 0;
 }
+
+.cv section {
+    padding-block: 1rem;
+    border-block-end: 1px solid oklch(92% 3% 200);
+}
+
+.cv section:last-of-type {
+    border-block-end: 0;
+}
+
+.cv h2 {
+    font-size: 160%;
+    margin-block: 0 0.5rem;
+}
+
+.cv article {
+    margin-block: 0.75rem 1rem;
+}
+
+.cv time {
+    font-variant-numeric: tabular-nums;
+    opacity: 0.8;
+}
