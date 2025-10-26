@@ -186,3 +186,25 @@ export async function fetchGitHubData(username) {
   if (!username) return null;
   return fetchJSON(`https://api.github.com/users/${encodeURIComponent(username)}`);
 }
+
+// Count public PRs by author using the Search API (public only)
+export async function fetchGitHubPublicPRCount(username) {
+  const url = `https://api.github.com/search/issues?q=is:pr+author:${encodeURIComponent(username)}`;
+  const data = await fetchJSON(url);
+  return data?.total_count ?? null; // number (public PRs), or null on error
+}
+
+// Render the GitHub contributions heatmap SVG (public profile endpoint)
+export function renderContributionsHeatmap(username, container) {
+  if (!container) return;
+  container.innerHTML = `
+    <h2>Contributions (past year)</h2>
+    <img
+      src="https://ghchart.rshah.org/${encodeURIComponent(username)}"
+      alt="GitHub contributions heatmap for ${username} in the last year"
+      style="max-width:100%; height:auto; display:block;"
+      loading="lazy"
+      decoding="async"
+    >
+  `;
+}

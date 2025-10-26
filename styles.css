@@ -250,3 +250,38 @@ button,
 select {
     font: inherit;
 }
+
+#profile-stats {
+    margin-block: 1.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid color-mix(in oklch, canvastext, canvas 70%);
+    border-radius: 0.5rem;
+}
+
+#profile-stats .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem 1rem;
+    margin: 0;
+}
+
+#profile-stats dt {
+    grid-row: 1;
+    font-weight: 600;
+}
+
+#profile-stats dd {
+    grid-row: 2;
+    margin: 0;
+    opacity: 0.9;
+    font-variant-numeric: tabular-nums;
+}
+
+#contrib-heatmap {
+    margin-block: 1.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid color-mix(in oklch, canvastext, canvas 70%);
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    /* in case SVG is wider */
+}
