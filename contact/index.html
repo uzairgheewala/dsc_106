@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact — Uzair Gheewala</title>
+    <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+    <header>
+        <nav aria-label="Primary">
+            <a href="/dsc_106/">Home</a>
+            <a href="/dsc_106/projects/">Projects</a>
+            <a href="/dsc_106/contact/">Contact</a>
+            <a href="https://github.com/uzairgheewala" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+        <h1>Contact</h1>
+        <p>Use the form below to get in touch (opens your email client).</p>
+    </header>
+    
+    <main>
+        <form action="mailto:ugheewala@ucsd.edu" method="POST" enctype="text/plain">
+            <p>
+                <label>
+                    Your email
+                    <input name="email" type="email" required value="student@example.com" />
+                </label>
+            </p>
+    
+            <p>
+                <label>
+                    Subject
+                    <input name="subject" value="Hello from the website" />
+                </label>
+            </p>
+    
+            <p>
+                <label>
+                    Message
+                    <textarea name="body" rows="6">Hi Uzair, I’m reaching out about…</textarea>
+                </label>
+            </p>
+    
+            <p>
+                <button>Send</button>
+            </p>
+        </form>
+    
+        <section aria-label="Notes">
+            <h2>How this form works</h2>
+            <ul>
+                <li>Submitting opens your default email client with fields prefilled.</li>
+                <li><code>method="POST"</code> and <code>enctype="text/plain"</code> are needed so the client formats the
+                    message body correctly.</li>
+                <li>This exposes your email address publicly; a real production form would use a server or a third-party
+                    service.</li>
+            </ul>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; <span id="year"></span> Uzair Gheewala</p>
+        <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+    </footer>
+</body>
+</html>
