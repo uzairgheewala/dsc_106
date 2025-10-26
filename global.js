@@ -107,3 +107,25 @@ export function $$(selector, context = document) {
     localStorage.setItem("colorScheme", value);
   });
 })();
+
+// Step 5 (optional): intercept contact form submit and build a properly encoded mailto URL
+(function enhanceContactForm() {
+  const form = document.querySelector("form[action^='mailto:']");
+  if (!form) return;
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const data = new FormData(form);
+    const params = [];
+    for (const [name, value] of data) {
+      // Build query params with percent-encoding for universal compatibility
+      params.push(`${encodeURIComponent(name)}=${encodeURIComponent(value)}`);
+    }
+
+    const base = form.getAttribute("action"); // e.g. "mailto:you@example.com"
+    const url = `${base}?${params.join("&")}`;
+    // Open the mail client
+    location.href = url;
+  });
+})();
