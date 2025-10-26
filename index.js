@@ -13,7 +13,7 @@ import { fetchJSON, renderProjects, fetchGitHubData } from "./global.js";
   const profileStats = document.querySelector("#profile-stats");
   if (!profileStats) return;
 
-  const data = await fetchGitHubData("YOUR_GITHUB_USERNAME"); // <-- set yours
+  const data = await fetchGitHubData("uzairgheewala"); // <-- set yours
   if (!data) {
     profileStats.textContent = "Unable to load GitHub profile data.";
     return;
