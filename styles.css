@@ -1,8 +1,20 @@
+/* Base typography (from Lab 1) + width constraints */
+html {
+    /* Accent color will arrive in Step 2.4; keep slot reserved */
+    --color-accent: oklch(65% 50% 0);
+    accent-color: var(--color-accent);
+}
+
 body {
-    /* 100% = browser default size; 1.5 = comfortable reading line height */
     font: 100%/1.5 system-ui;
-    margin: 0;
-    padding: 0 1rem;
+    /* Step 1: keep content readable */
+    max-width: 100ch;
+    /* scales with font size */
+    margin-inline: max(1em, (100% - 100ch) / 2);
+    /* centered & gutters on small screens */
+    padding-inline: 0;
+    /* we rely on margin math above */
+    margin-block: 0;
 }
 
 /* Small, nice-to-have touches that don’t conflict with the lab’s ask */
