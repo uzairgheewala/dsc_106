@@ -248,6 +248,24 @@ form button {
     border: 1px solid color-mix(in oklch, canvastext, canvas 70%);
 }
 
+/* Hover fade: only dim others when a path is hovered */
+#projects-pie-plot:has(path:hover) path:not(:hover) {
+    opacity: 0.5;
+}
+
+/* Selected style overrides --color & fill */
+.selected {
+    --color: oklch(60% 45% 0) !important;
+}
+
+#projects-pie-plot path.selected {
+    fill: var(--color) !important;
+}
+
+.legend li.selected .swatch {
+    background: var(--color) !important;
+}
+
 #projects-pie-plot path {
     transition: 300ms;
     cursor: pointer;

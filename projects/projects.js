@@ -28,12 +28,16 @@ function rollupProjectsByYear(list) {
   return r.map(([year, count]) => ({ label: String(year), value: count }));
 }
 
+let selectedIndex = -1; // -1 = none selected
+let lastData = [];      // keep last rolled data for clicks
+
 function renderPieFromData(list) {
   // clear previous
   svg.selectAll("path").remove();
   legend.selectAll("*").remove();
 
   const data = rollupProjectsByYear(list);
+  lastData = data;
   if (data.length === 0) return;
 
   const arcGen = d3.arc().innerRadius(0).outerRadius(50);
@@ -41,18 +45,46 @@ function renderPieFromData(list) {
   const slices = sliceGen(data);
   const arcs = slices.map(d => arcGen(d));
 
-  // draw arcs
+  // draw arcs with click handler
   arcs.forEach((d, i) => {
-    svg.append("path").attr("d", d).attr("fill", colors(i));
+    svg
+      .append("path")
+      .attr("d", d)
+      .attr("fill", colors(i))
+      .classed("selected", i === selectedIndex)
+      .on("click", () => {
+        selectedIndex = (selectedIndex === i ? -1 : i);
+        applyYearFilterAndRerender();
+      });
   });
 
-  // legend
+  // legend with click handler (mirrors arcs)
   data.forEach((d, i) => {
     legend
       .append("li")
       .attr("style", `--color:${colors(i)}`)
-      .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`);
+      .classed("selected", i === selectedIndex)
+      .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`)
+      .on("click", () => {
+        selectedIndex = (selectedIndex === i ? -1 : i);
+        applyYearFilterAndRerender();
+      });
   });
+}
+
+function applyYearFilterAndRerender() {
+  const filteredByQuery = filterByQuery(projects ?? [], query);
+  const result =
+    selectedIndex === -1
+      ? filteredByQuery
+      : filteredByQuery.filter(p => String(p.year) === lastData[selectedIndex].label);
+
+  // re-render list
+  renderProjects(result, projectsContainer, "h2");
+
+  // re-render pie to refresh selected classes
+  // (pie still reflects the filteredByQuery population, per lab step 4.4)
+  renderPieFromData(filteredByQuery);
 }
 
 // initial render with full list
