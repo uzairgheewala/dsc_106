@@ -30,3 +30,12 @@ const colors = d3.scaleOrdinal(d3.schemeTableau10);
 arcs.forEach((d, i) => {
   svg.append("path").attr("d", d).attr("fill", colors(i));
 });
+
+// ----- Legend for the demo data -----
+legend.selectAll("*").remove();
+demoData.forEach((val, i) => {
+  legend
+    .append("li")
+    .attr("style", `--color:${colors(i)}`)
+    .html(`<span class="swatch"></span> Slice ${i + 1} <em>(${val})</em>`);
+});
