@@ -153,14 +153,10 @@ export async function fetchJSON(url) {
  * @param {string} headingLevel - "h2" | "h3" | ...
  */
 export function renderProjects(projects, container, headingLevel = "h2") {
-  if (!container) {
-    console.warn("renderProjects: container not found");
-    return;
-  }
-  // Basic validation
+  if (!container) { console.warn("renderProjects: container not found"); return; }
   const validHeading = /^h[1-6]$/.test(headingLevel) ? headingLevel : "h2";
 
-  container.innerHTML = ""; // clear previous content
+  container.innerHTML = "";
 
   if (!Array.isArray(projects) || projects.length === 0) {
     container.innerHTML = `<p>No projects to display yet.</p>`;
@@ -172,11 +168,15 @@ export function renderProjects(projects, container, headingLevel = "h2") {
     const safeTitle = p?.title ?? "Untitled Project";
     const safeImg   = p?.image ?? "https://vis-society.github.io/labs/2/images/empty.svg";
     const safeDesc  = p?.description ?? "";
+    const safeYear  = p?.year ?? "—";
 
     article.innerHTML = `
       <${validHeading}>${safeTitle}</${validHeading}>
       <img src="${safeImg}" alt="${safeTitle}">
-      <p>${safeDesc}</p>
+      <div class="proj-text">
+        <p>${safeDesc}</p>
+        <p class="proj-year" aria-label="Project year">${safeYear}</p>
+      </div>
     `;
     container.appendChild(article);
   }

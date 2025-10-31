@@ -177,28 +177,30 @@ form button {
     grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
     gap: 1em;
     margin-block: 1.5rem;
+    grid-auto-rows: auto;
 }
 
 .projects article {
     border: 1px solid oklch(90% 3% 200);
     padding: 1em;
     display: grid;
-    /* prepare for subgrid rows next step */
-}
-
-.projects {
-    /* define three implicit rows per card we want to line up:
-     (1) heading, (2) image, (3) text */
-    grid-auto-rows: auto;
-    /* provide rows for subgrid to inherit */
-}
-
-.projects article {
     grid-row: span 3;
     /* each card occupies 3 rows in the parent grid */
     grid-template-rows: subgrid;
     /* adopt the parent’s row tracks */
     gap: 0.75em;
+}
+
+.projects article .proj-text {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.proj-year {
+    opacity: 0.7;
+    font-variant-numeric: oldstyle-nums;
+    font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+    /* Baskerville fallback vibe */
 }
 
 .projects h2 {
