@@ -207,6 +207,53 @@ form button {
     margin: 0;
 }
 
+#projects-pie-plot {
+    max-width: 20em;
+    margin-block: 1.5em;
+    overflow: visible;
+}
+
+.pie-legend {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    /* responsive */
+}
+
+.legend {
+    list-style: none;
+    padding: 0.75rem;
+    margin: 0.5rem 0 0;
+    border: 1px solid color-mix(in oklch, canvastext, canvas 70%);
+    border-radius: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9em, 1fr));
+    gap: 0.75rem 1rem;
+    flex: 1 1 16rem;
+}
+
+.legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.legend .swatch {
+    display: inline-block;
+    width: 1rem;
+    aspect-ratio: 1 / 1;
+    border-radius: 0.25rem;
+    background: var(--color);
+    border: 1px solid color-mix(in oklch, canvastext, canvas 70%);
+}
+
+#projects-pie-plot path {
+    transition: 300ms;
+    cursor: pointer;
+    /* interactive later */
+}
+
 .cv section {
     padding-block: 1rem;
     border-block-end: 1px solid oklch(92% 3% 200);
