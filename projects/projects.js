@@ -12,30 +12,48 @@ if (titleEl && Array.isArray(projects)) {
   titleEl.textContent = `${titleEl.textContent.replace(/\s*\(\d+\)$/, "")} (${projects.length})`;
 }
 
-// ---------- PIE: basic static demo ----------
+// ---------- PIE: reusable renderer over data ----------
 const svg = d3.select("#projects-pie-plot");
 const legend = d3.select(".legend");
-
-// simple data
-let demoData = [1, 2]; // 33% / 66%
-const arcGen = d3.arc().innerRadius(0).outerRadius(50);
-const sliceGen = d3.pie(); // uses values directly
-const slices = sliceGen(demoData); // [{startAngle,endAngle,value}, …]
-const arcs = slices.map(d => arcGen(d));
-
-// color scale
 const colors = d3.scaleOrdinal(d3.schemeTableau10);
 
-// draw arcs
-arcs.forEach((d, i) => {
-  svg.append("path").attr("d", d).attr("fill", colors(i));
-});
+function rollupProjectsByYear(list) {
+  const r = d3.rollups(
+    list,
+    v => v.length,
+    d => d.year
+  ); // e.g. [["2024", 3], ...]
+  // sort by year (desc)
+  r.sort((a, b) => Number(b[0]) - Number(a[0]));
+  return r.map(([year, count]) => ({ label: String(year), value: count }));
+}
 
-// ----- Legend for the demo data -----
-legend.selectAll("*").remove();
-demoData.forEach((val, i) => {
-  legend
-    .append("li")
-    .attr("style", `--color:${colors(i)}`)
-    .html(`<span class="swatch"></span> Slice ${i + 1} <em>(${val})</em>`);
-});
+function renderPieFromData(list) {
+  // clear previous
+  svg.selectAll("path").remove();
+  legend.selectAll("*").remove();
+
+  const data = rollupProjectsByYear(list);
+  if (data.length === 0) return;
+
+  const arcGen = d3.arc().innerRadius(0).outerRadius(50);
+  const sliceGen = d3.pie().value(d => d.value);
+  const slices = sliceGen(data);
+  const arcs = slices.map(d => arcGen(d));
+
+  // draw arcs
+  arcs.forEach((d, i) => {
+    svg.append("path").attr("d", d).attr("fill", colors(i));
+  });
+
+  // legend
+  data.forEach((d, i) => {
+    legend
+      .append("li")
+      .attr("style", `--color:${colors(i)}`)
+      .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`);
+  });
+}
+
+// initial render with full list
+renderPieFromData(projects ?? []);
