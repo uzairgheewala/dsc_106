@@ -57,3 +57,29 @@ function renderPieFromData(list) {
 
 // initial render with full list
 renderPieFromData(projects ?? []);
+
+let query = "";
+const searchInput = document.querySelector(".searchBar");
+
+function filterByQuery(list, q) {
+  const ql = q.trim().toLowerCase();
+  if (!ql) return list;
+  return list.filter(p => {
+    const all = Object.values(p).join("\n").toLowerCase();
+    return all.includes(ql);
+  });
+}
+
+function renderAll() {
+  const filtered = filterByQuery(projects ?? [], query);
+  renderProjects(filtered, projectsContainer, "h2");
+  renderPieFromData(filtered);
+}
+
+searchInput?.addEventListener("input", (e) => {
+  query = e.target.value;
+  renderAll();
+});
+
+// first reactive render
+renderAll();
