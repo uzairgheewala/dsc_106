@@ -64,7 +64,7 @@ function renderPieFromData(list) {
           selectedIndex = i;
           selectedYear = data[i].label; 
         }
-        applyYearFilterAndRerender_buggy();
+        applyYearFilterAndRerender();
       });
   });
 
@@ -82,7 +82,7 @@ function renderPieFromData(list) {
           selectedIndex = i;
           selectedYear = d.label;
         }
-        applyYearFilterAndRerender_buggy();
+        applyYearFilterAndRerender();
       });
   });
 }
@@ -125,9 +125,18 @@ function filterByQuery(list, q) {
 }
 
 function renderAll() {
-  const filtered = filterByQuery(projects ?? [], query);
-  renderProjects(filtered, projectsContainer, "h2");
-  renderPieFromData(filtered);
+  const filteredByQuery = filterByQuery(projects ?? [], query);
+
+  // Keep the pie in the "query context" (so it shows distribution of visible projects)
+  renderPieFromData(filteredByQuery);
+
+  // But render the GRID as the intersection of query AND selectedYear
+  const result =
+    selectedYear == null
+      ? filteredByQuery
+      : filteredByQuery.filter(p => String(p.year) === String(selectedYear));
+
+  renderProjects(result, projectsContainer, "h2");
 }
 
 searchInput?.addEventListener("input", (e) => {
