@@ -64,7 +64,7 @@ function renderPieFromData(list) {
           selectedIndex = i;
           selectedYear = data[i].label; 
         }
-        applyYearFilterAndRerender();
+        applyYearFilterAndRerender_buggy();
       });
   });
 
@@ -82,7 +82,7 @@ function renderPieFromData(list) {
           selectedIndex = i;
           selectedYear = d.label;
         }
-        applyYearFilterAndRerender();
+        applyYearFilterAndRerender_buggy();
       });
   });
 }

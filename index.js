@@ -6,14 +6,25 @@ import {
   renderContributionsHeatmap
 } from "./global.js";
 
-const GITHUB_USER = "uzairgheewala"; // <-- set me
+const GITHUB_USER = "uzairgheewala"; 
 
-// Latest projects (unchanged)
+// Latest projects (by year, descending)
 (async function renderLatest() {
   const projects = await fetchJSON("./lib/projects.json");
-  const latest = Array.isArray(projects) ? projects.slice(0, 3) : [];
   const container = document.querySelector(".projects");
-  if (container) renderProjects(latest, container, "h3");
+  if (!container || !Array.isArray(projects)) return;
+
+  const latest = projects
+    .map((p, idx) => ({
+      ...p,
+      _idx: idx,
+      _year: Number(p.year) || Number.NEGATIVE_INFINITY,
+    }))
+    .sort((a, b) => (b._year - a._year) || (a._idx - b._idx)) // year desc, then stable by original order
+    .slice(0, 3)
+    .map(({ _idx, _year, ...rest }) => rest); // strip helpers
+
+  renderProjects(latest, container, "h3");
 })();
 
 // GitHub stats + PRs + heatmap
@@ -21,7 +32,7 @@ const GITHUB_USER = "uzairgheewala"; // <-- set me
   const profileStats = document.querySelector("#profile-stats");
   const heatmap = document.querySelector("#contrib-heatmap");
 
-  // Heatmap first (doesn't require API JSON)
+  // Heatmap
   if (heatmap) {
     renderContributionsHeatmap(GITHUB_USER, heatmap);
   }
