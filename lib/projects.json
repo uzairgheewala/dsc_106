@@ -44,7 +44,7 @@
   {
     "title": "ZSuite (Zeros Explorer)",
     "year": "2022",
-    "image": "..images/zeta.png",
+    "image": "../images/zeta.png",
     "description": "A suite of visualizers and interactive apps for exploring the Riemann zeta function."
   },
   {

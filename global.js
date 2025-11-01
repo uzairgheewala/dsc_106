@@ -11,6 +11,29 @@ console.log("IT’S ALIVE!");
 const $$ = (selector, context = document) =>
   Array.from((context || document).querySelectorAll(selector));
 
+function getBasePath() {
+  // your repo folder name on GH Pages
+  const SLUG = "dsc_106";
+
+  // If the current path already contains /dsc_106/, use that (works locally and on GH Pages)
+  if (location.pathname.includes(`/${SLUG}/`)) {
+    return `/${SLUG}/`;
+  }
+
+  // Otherwise you’re likely serving from the workspace root (or deployed under root)
+  return "/";
+}
+
+function resolveAsset(src) {
+  const fallback = "https://vis-society.github.io/labs/2/images/empty.svg";
+  if (!src) return fallback;
+  if (/^https?:\/\//i.test(src)) return src;              // absolute URL stays as-is
+
+  // strip any leading ../ segments so we can make a root-based path:
+  const stripped = src.replace(/^(\.\.\/)+/g, "");        // "../images/x.png" -> "images/x.png"
+  return getBasePath() + stripped;                        // -> "/dsc_106/images/x.png" on GH Pages
+}
+
 // Step 2: automatic current page link (for Lab 2 hard-coded nav)
 (function currentLinkHighlight() {
   const navLinks = $$("nav a");
@@ -35,7 +58,8 @@ const $$ = (selector, context = document) =>
 
   // Detect local vs GitHub Pages (project name: dsc_106)
   const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
-  const BASE_PATH = isLocal ? "/" : "/dsc_106/"; // adjust if you rename the repo
+  //const BASE_PATH = isLocal ? "/" : "/dsc_106/"; // adjust if you rename the repo
+  const BASE_PATH = getBasePath();
 
   // Create <nav> and prepend to <body>
   const nav = document.createElement("nav");
@@ -166,7 +190,8 @@ export function renderProjects(projects, container, headingLevel = "h2") {
   for (const p of projects) {
     const article = document.createElement("article");
     const safeTitle = p?.title ?? "Untitled Project";
-    const safeImg   = p?.image ?? "https://vis-society.github.io/labs/2/images/empty.svg";
+    const rawImg    = p?.image ?? "https://vis-society.github.io/labs/2/images/empty.svg";
+    const safeImg   = resolveAsset(rawImg);
     const safeDesc  = p?.description ?? "";
     const safeYear  = p?.year ?? "—";
 

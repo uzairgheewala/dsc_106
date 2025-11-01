@@ -83,7 +83,7 @@ function renderPieFromData(list) {
           selectedIndex = i;
           selectedYear = d.label; // NEW
         }
-        applyYearFilterAndRerender();
+        applyYearFilterAndRerender_buggy();
       });
   });
 }
@@ -101,6 +101,15 @@ function applyYearFilterAndRerender() {
 
   // re-render pie from query-filtered set (context stays visible)
   renderPieFromData(filteredByQuery);
+}
+
+function applyYearFilterAndRerender_buggy() {
+  const result = selectedYear == null
+    ? (projects ?? [])
+    : (projects ?? []).filter(p => String(p.year) === String(selectedYear));
+
+  renderProjects(result, projectsContainer, "h2");   // <- ignores query
+  renderPieFromData(projects ?? []);                 // <- also ignores query
 }
 
 // initial render with full list
