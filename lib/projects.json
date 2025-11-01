@@ -1,14 +1,74 @@
 [
-  { "title": "Project One",   "year": "2023", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project one." },
-  { "title": "Project Two",   "year": "2024", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project two." },
-  { "title": "Project Three", "year": "2022", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project three." },
-  { "title": "Project Four",  "year": "2024", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project four." },
-  { "title": "Project Five",  "year": "2021", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project five." },
-  { "title": "Project Six",   "year": "2024", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project six." },
-  { "title": "Project Seven", "year": "2020", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project seven." },
-  { "title": "Project Eight", "year": "2023", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project eight." },
-  { "title": "Project Nine",  "year": "2022", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project nine." },
-  { "title": "Project Ten",   "year": "2021", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project ten." },
-  { "title": "Project Eleven","year": "2023", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project eleven." },
-  { "title": "Project Twelve","year": "2020", "image": "https://vis-society.github.io/labs/2/images/empty.svg", "description": "Short description for project twelve." }
+  {
+    "title": "CNN — Recognizing numbers from hand signs",
+    "year": "2019",
+    "image": "../images/CNN_num_handsign.gif",
+    "description": "After preprocessing a dataset of hand-sign images, built a CNN that predicts the integer represented by a hand sign image."
+  },
+  {
+    "title": "Mandelbrot Set Viewer",
+    "year": "2021",
+    "image": "../images/mandelbrot.png",
+    "description": "A simple interactive Mandelbrot set viewer with pan/zoom for exploring complex-plane structure."
+  },
+  {
+    "title": "AutoMeet",
+    "year": "2020",
+    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+    "description": "Windows app to store class meeting times and automatically launch Zoom meetings on schedule."
+  },
+  {
+    "title": "Pi Approximator",
+    "year": "2020",
+    "image": "../images/pi.png",
+    "description": "Interactive visualizer of the Monte Carlo circle method to estimate π."
+  },
+  {
+    "title": "Interactive Chaos Theory",
+    "year": "2022",
+    "image": "../images/chaos.png",
+    "description": "Interactive visualizers for chaotic systems (e.g., Lorenz Attractor, double pendulum)."
+  },
+  {
+    "title": "Fourier Transform Visualizer",
+    "year": "2022",
+    "image": "../images/fourier.png",
+    "description": "Interactive demo showing how Fourier transforms affect different signals."
+  },
+  {
+    "title": "Lottery Simulator",
+    "year": "2022",
+    "image": "../images/lottery.png",
+    "description": "Simulate multiple lottery designs with custom conditions to explore expected outcomes."
+  },
+  {
+    "title": "ZSuite (Zeros Explorer)",
+    "year": "2022",
+    "image": "..images/zeta.png",
+    "description": "A suite of visualizers and interactive apps for exploring the Riemann zeta function."
+  },
+  {
+    "title": "Interactive Game Theory",
+    "year": "2022",
+    "image": "../images/game_theory.png",
+    "description": "Interactive app to simulate strategies in classic games such as the Prisoners’ Dilemma."
+  },
+  {
+    "title": "HDLOpt — Automated HDL Unit-Level Verification Suite",
+    "year": "2024",
+    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+    "description": "Open-source suite for unit-level HDL verification with smart testbench generation, resource/timing/power/netlist/waveform analysis pipelines, and CI integrations. Lays groundwork for automated UVM testbench generation and simulation."
+  },
+  {
+    "title": "Agentic E2E Automated Software Development System",
+    "year": "2025",
+    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+    "description": "An end-to-end agentic automation ecosystem for client onboarding, contract generation, software deliverable production, and lifecycle management—targeting state-of-the-art SWE-Bench performance."
+  },
+  {
+    "title": "Street Maps Pathfinding",
+    "year": "2023",
+    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+    "description": "Pathfinding on real-world street maps with efficient graph search and interactive UI."
+  }
 ]
