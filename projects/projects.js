@@ -1,7 +1,7 @@
 import { fetchJSON, renderProjects } from "../global.js";
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 
-// ---------- Load data and list ----------
+// Load data and list
 let projects = await fetchJSON("../lib/projects.json");
 const projectsContainer = document.querySelector(".projects");
 renderProjects(projects ?? [], projectsContainer, "h2");
@@ -12,7 +12,7 @@ if (titleEl && Array.isArray(projects)) {
   titleEl.textContent = `${titleEl.textContent.replace(/\s*\(\d+\)$/, "")} (${projects.length})`;
 }
 
-// ---------- PIE: reusable renderer over data ----------
+// pie
 const svg = d3.select("#projects-pie-plot");
 const legend = d3.select(".legend");
 const colors = d3.scaleOrdinal(d3.schemeTableau10);
@@ -22,15 +22,15 @@ function rollupProjectsByYear(list) {
     list,
     v => v.length,
     d => d.year
-  ); // e.g. [["2024", 3], ...]
-  // sort by year (desc)
+  ); 
+  // desc year
   r.sort((a, b) => Number(b[0]) - Number(a[0]));
   return r.map(([year, count]) => ({ label: String(year), value: count }));
 }
 
-let selectedYear = null; // NEW: year string or null
-let selectedIndex = -1; // -1 = none selected
-let lastData = [];      // keep last rolled data for clicks
+let selectedYear = null; 
+let selectedIndex = -1;
+let lastData = []; 
 
 function renderPieFromData(list) {
   svg.selectAll("path").remove();
@@ -40,7 +40,6 @@ function renderPieFromData(list) {
   lastData = data;
   if (data.length === 0) return;
 
-  // NEW: map selectedYear -> selectedIndex in the current data
   selectedIndex =
     selectedYear == null
       ? -1
@@ -63,7 +62,7 @@ function renderPieFromData(list) {
           selectedYear = null;
         } else {
           selectedIndex = i;
-          selectedYear = data[i].label; // NEW: store the year
+          selectedYear = data[i].label; 
         }
         applyYearFilterAndRerender();
       });
@@ -81,11 +80,20 @@ function renderPieFromData(list) {
           selectedYear = null;
         } else {
           selectedIndex = i;
-          selectedYear = d.label; // NEW
+          selectedYear = d.label;
         }
-        applyYearFilterAndRerender_buggy();
+        applyYearFilterAndRerender();
       });
   });
+}
+
+function applyYearFilterAndRerender_buggy() {
+  const result = selectedYear == null
+    ? (projects ?? [])
+    : (projects ?? []).filter(p => String(p.year) === String(selectedYear));
+
+  renderProjects(result, projectsContainer, "h2"); 
+  renderPieFromData(projects ?? []);
 }
 
 function applyYearFilterAndRerender() {
@@ -96,20 +104,9 @@ function applyYearFilterAndRerender() {
       ? filteredByQuery
       : filteredByQuery.filter(p => String(p.year) === String(selectedYear));
 
-  // re-render list with both filters (query + selected year)
   renderProjects(result, projectsContainer, "h2");
 
-  // re-render pie from query-filtered set (context stays visible)
   renderPieFromData(filteredByQuery);
-}
-
-function applyYearFilterAndRerender_buggy() {
-  const result = selectedYear == null
-    ? (projects ?? [])
-    : (projects ?? []).filter(p => String(p.year) === String(selectedYear));
-
-  renderProjects(result, projectsContainer, "h2");   // <- ignores query
-  renderPieFromData(projects ?? []);                 // <- also ignores query
 }
 
 // initial render with full list
