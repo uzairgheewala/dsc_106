@@ -170,6 +170,16 @@ function renderScatterPlot(data, commits) {
     .domain([0, 24])
     .range([usableArea.bottom, usableArea.top]);
 
+  // --- Radius scale for "lines edited" ---
+  const [minLines, maxLines] = d3.extent(commits, d => d.totalLines);
+
+  const rScale = d3.scaleSqrt()           // sqrt so area ~ lines
+    .domain([minLines || 1, maxLines || 1])
+    .range([3, 30]);                      // tweak if needed
+
+  // Draw larger dots first so small ones stay clickable on top
+  const sortedCommits = d3.sort(commits, d => -d.totalLines);
+
   // Gridlines (horizontal)
   const gridlines = svg
     .append("g")
@@ -201,13 +211,15 @@ function renderScatterPlot(data, commits) {
 
   dots
     .selectAll("circle")
-    .data(commits)
+    .data(sortedCommits)
     .join("circle")
-    .attr("cx", (d) => xScale(d.datetime))
-    .attr("cy", (d) => yScale(d.hourFrac))
-    .attr("r", 5)
+    .attr("cx", d => xScale(d.datetime))
+    .attr("cy", d => yScale(d.hourFrac))
+    .attr("r", d => rScale(d.totalLines))
     .attr("fill", "steelblue")
+    .style("fill-opacity", 0.7)
     .on("mouseenter", (event, commit) => {
+      d3.select(event.currentTarget).style("fill-opacity", 1);
       renderTooltipContent(commit);
       updateTooltipVisibility(true);
       updateTooltipPosition(event);
@@ -215,7 +227,8 @@ function renderScatterPlot(data, commits) {
     .on("mousemove", (event) => {
       updateTooltipPosition(event);
     })
-    .on("mouseleave", () => {
+    .on("mouseleave", (event) => {
+      d3.select(event.currentTarget).style("fill-opacity", 0.7);
       updateTooltipVisibility(false);
     });
 }
