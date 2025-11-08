@@ -1,5 +1,9 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 
+let xScaleGlobal = null;
+let yScaleGlobal = null;
+let commitsGlobal = null;
+
 async function loadData() {
   const data = await d3.csv("loc.csv", (row) => ({
     ...row,
@@ -170,6 +174,9 @@ function renderScatterPlot(data, commits) {
     .domain([0, 24])
     .range([usableArea.bottom, usableArea.top]);
 
+  xScaleGlobal = xScale;
+  yScaleGlobal = yScale;
+
   // --- Radius scale for "lines edited" ---
   const [minLines, maxLines] = d3.extent(commits, d => d.totalLines);
 
@@ -231,11 +238,91 @@ function renderScatterPlot(data, commits) {
       d3.select(event.currentTarget).style("fill-opacity", 0.7);
       updateTooltipVisibility(false);
     });
+
+  // --- Brushing ---
+  const brush = d3.brush().on("start brush end", brushed);
+
+  svg.call(brush);
+
+  // Bring dots and axes above the overlay so tooltips still work
+  svg.selectAll(".dots, .overlay ~ *").raise();
+}
+
+function isCommitSelected(selection, commit) {
+  if (!selection || !xScaleGlobal || !yScaleGlobal) return false;
+
+  const [[x0, y0], [x1, y1]] = selection;
+  const cx = xScaleGlobal(commit.datetime);
+  const cy = yScaleGlobal(commit.hourFrac);
+
+  return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
+}
+
+function renderSelectionCount(selection) {
+  const selected = selection && commitsGlobal
+    ? commitsGlobal.filter(d => isCommitSelected(selection, d))
+    : [];
+
+  const countElement = document.querySelector("#selection-count");
+  const n = selected.length;
+
+  countElement.textContent = n
+    ? `${n} commit${n === 1 ? "" : "s"} selected`
+    : "No commits selected";
+
+  return selected;
+}
+
+function renderLanguageBreakdown(selection) {
+  const container = document.getElementById("language-breakdown");
+  container.innerHTML = "";
+
+  if (!commitsGlobal) return;
+
+  const selectedCommits = selection
+    ? commitsGlobal.filter(d => isCommitSelected(selection, d))
+    : [];
+
+  if (selectedCommits.length === 0) {
+    // nothing selected: show nothing (or overall breakdown if you want)
+    return;
+  }
+
+  const lines = selectedCommits.flatMap(d => d.lines || []);
+
+  const breakdown = d3.rollup(
+    lines,
+    v => v.length,
+    d => d.type
+  );
+
+  for (const [language, count] of breakdown) {
+    const proportion = count / lines.length;
+    const formatted = d3.format(".1~%")(proportion);
+
+    container.innerHTML += `
+      <dt>${language}</dt>
+      <dd>${count} lines (${formatted})</dd>
+    `;
+  }
+}
+
+function brushed(event) {
+  const selection = event.selection;
+
+  d3.selectAll("circle").classed("selected", d =>
+    isCommitSelected(selection, d)
+  );
+
+  renderSelectionCount(selection);
+  renderLanguageBreakdown(selection);
 }
 
 // main
 const data = await loadData();
 const commits = processCommits(data);
+
+commitsGlobal = commits;
 
 renderCommitInfo(data, commits);
 renderScatterPlot(data, commits);
