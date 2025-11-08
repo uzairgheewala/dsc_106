@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meta — Code analytics</title>
+    <meta name="description" content="Meta-analysis of this site's codebase." />
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+
+<body>
+    <header>
+        <h1>Meta: Code analytics</h1>
+        <p>
+            This page visualizes statistics about the code in this repo
+            (lines of code, commits, activity over time, etc.).
+        </p>
+    </header>
+
+    <main>
+        <section>
+            <h2>Summary stats</h2>
+            <div id="stats"></div>
+        </section>
+        <!-- later: scatterplot, tooltip, brushing, etc. -->
+    </main>
+
+    <footer>
+        <p>&copy; <span id="year"></span> Uzair Gheewala</p>
+        <script>
+            document.getElementById('year').textContent = new Date().getFullYear();
+        </script>
+    </footer>
+
+    <!-- global nav / theme switcher -->
+    <script type="module" src="../global.js"></script>
+    <!-- lab-6 logic will go here -->
+    <script type="module" src="./main.js"></script>
+</body>
+
+</html>
