@@ -360,6 +360,61 @@ dl.stats dd {
     margin: 0;
 }
 
+/* Tooltip-style <dl> */
+dl.info {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 0.5rem;
+    row-gap: 0.25rem;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    font-size: 0.9rem;
+}
+
+dl.info dt {
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+dl.info dd {
+    margin: 0;
+}
+
+.tooltip {
+    position: fixed;
+    z-index: 10;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.tooltip[hidden]:not(:hover, :focus-within) {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Scatterplot dots & gridlines */
+#chart svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.gridlines line {
+    stroke: currentColor;
+    stroke-opacity: 0.15;
+}
+
+circle {
+    transition: 200ms;
+    transform-origin: center;
+    transform-box: fill-box;
+}
+
+circle:hover {
+    transform: scale(1.5);
+}
+
 #contrib-heatmap {
     margin-block: 1.5rem;
     padding: 0.75rem 1rem;
