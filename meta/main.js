@@ -15,7 +15,7 @@ async function loadData() {
 
 function processCommits(data) {
   return d3
-    .groups(data, (d) => d.commit) // [commitHash, lines[]]
+    .groups(data, (d) => d.commit)
     .map(([commit, lines]) => {
       const first = lines[0];
       const { author, date, time, timezone, datetime } = first;
@@ -32,7 +32,6 @@ function processCommits(data) {
         totalLines: lines.length,
       };
 
-      // keep raw lines as non-enumerable so logs stay clean
       Object.defineProperty(ret, "lines", {
         value: lines,
         enumerable: false,
@@ -44,8 +43,65 @@ function processCommits(data) {
     });
 }
 
+function renderCommitInfo(data, commits) {
+  const container = d3.select("#stats");
+  container.selectAll("*").remove();
+
+  const dl = container.append("dl").attr("class", "stats");
+
+  // Total LOC (rows in loc.csv)
+  dl.append("dt").html('Total <abbr title="Lines of code">LOC</abbr>');
+  dl.append("dd").text(data.length);
+
+  // Total commits
+  dl.append("dt").text("Total commits");
+  dl.append("dd").text(commits.length);
+
+  // Number of files (distinct d.file)
+  const numFiles = d3.group(data, (d) => d.file).size;
+  dl.append("dt").text("Files");
+  dl.append("dd").text(numFiles);
+
+  // Longest file (by max line number)
+  const fileLengths = d3.rollups(
+    data,
+    (v) => d3.max(v, (d) => d.line),
+    (d) => d.file
+  );
+  const longestFileEntry = d3.greatest(fileLengths, (d) => d[1]);
+  if (longestFileEntry) {
+    const [fileName, maxLines] = longestFileEntry;
+    dl.append("dt").text("Longest file");
+    dl.append("dd").text(`${fileName} (${maxLines} lines)`);
+  }
+
+  // Average line length in characters
+  const avgLineLength = d3.mean(data, (d) => d.length);
+  dl.append("dt").text("Average line length");
+  dl.append("dd").text(`${avgLineLength.toFixed(1)} chars`);
+
+  // Time-of-day with most edits (morning/afternoon/evening/night)
+  const periods = d3.rollups(
+    data,
+    (v) => v.length,
+    (d) => {
+      const hour = d.datetime.getHours();
+      if (hour < 6) return "Night";
+      if (hour < 12) return "Morning";
+      if (hour < 18) return "Afternoon";
+      return "Evening";
+    }
+  );
+  const maxPeriod = d3.greatest(periods, (d) => d[1]);
+  if (maxPeriod) {
+    const [periodName, count] = maxPeriod;
+    dl.append("dt").text("Most active time of day");
+    dl.append("dd").text(`${periodName} (${count} lines touched)`);
+  }
+}
+
+// main
 const data = await loadData();
 const commits = processCommits(data);
 
-console.log("commits:", commits.length);
-console.log("first commit:", commits[0]);
+renderCommitInfo(data, commits);
