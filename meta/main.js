@@ -22,8 +22,8 @@ async function loadData() {
 }
 
 function processCommits(data) {
-  return d3
-    .groups(data, (d) => d.commit)
+  const commits = d3
+    .groups(data, d => d.commit)
     .map(([commit, lines]) => {
       const first = lines[0];
       const { author, date, time, timezone, datetime } = first;
@@ -48,31 +48,34 @@ function processCommits(data) {
       });
 
       return ret;
-    });
+    })
+    .sort((a, b) => a.datetime - b.datetime);
+
+  return commits;
 }
 
-function renderCommitInfo(data, commits) {
+function renderCommitInfo(lines, commits) {
   const container = d3.select("#stats");
   container.selectAll("*").remove();
 
   const dl = container.append("dl").attr("class", "stats");
 
-  // Total LOC (rows in loc.csv)
+  // Total LOC (rows in this subset)
   dl.append("dt").html('Total <abbr title="Lines of code">LOC</abbr>');
-  dl.append("dd").text(data.length);
+  dl.append("dd").text(lines.length);
 
-  // Total commits
+  // Total commits (in this subset)
   dl.append("dt").text("Total commits");
   dl.append("dd").text(commits.length);
 
-  // Number of files (distinct d.file)
-  const numFiles = d3.group(data, (d) => d.file).size;
+  // Number of files (distinct d.file in this subset)
+  const numFiles = d3.group(lines, (d) => d.file).size;
   dl.append("dt").text("Files");
   dl.append("dd").text(numFiles);
 
-  // Longest file (by max line number)
+  // Longest file (by max line number in this subset)
   const fileLengths = d3.rollups(
-    data,
+    lines,
     (v) => d3.max(v, (d) => d.line),
     (d) => d.file
   );
@@ -84,13 +87,13 @@ function renderCommitInfo(data, commits) {
   }
 
   // Average line length in characters
-  const avgLineLength = d3.mean(data, (d) => d.length);
+  const avgLineLength = d3.mean(lines, (d) => d.length);
   dl.append("dt").text("Average line length");
   dl.append("dd").text(`${avgLineLength.toFixed(1)} chars`);
 
   // Time-of-day with most edits (morning/afternoon/evening/night)
   const periods = d3.rollups(
-    data,
+    lines,
     (v) => v.length,
     (d) => {
       const hour = d.datetime.getHours();
@@ -317,41 +320,39 @@ function initTimeSlider(data, commits) {
   const timeEl = document.getElementById("commit-progress-time");
   if (!slider || !timeEl) return;
 
-  // Map [minDate, maxDate] -> [0, 100]
-  const timeScale = d3
-    .scaleTime()
-    .domain(d3.extent(commits, d => d.datetime))
-    .range([0, 100]);
+  // Slider covers 0..(N-1) where N = number of commits
+  slider.min  = "0";
+  slider.max  = String(commits.length - 1);
+  slider.step = "1";
 
   function onTimeSliderChange() {
-    commitProgress = Number(slider.value);
-    commitMaxTime = timeScale.invert(commitProgress);
+    const idx = Number(slider.value);
+
+    // Clamp defensively
+    const safeIdx = Math.min(Math.max(idx, 0), commits.length - 1);
+
+    const cutoffCommit = commits[safeIdx];
+    commitMaxTime = cutoffCommit.datetime;
 
     timeEl.textContent = commitMaxTime.toLocaleString("en", {
       dateStyle: "long",
       timeStyle: "short",
     });
 
-    // Filter commits up to commitMaxTime
-    filteredCommits = commits.filter(d => d.datetime <= commitMaxTime);
+    // Include commits up to and including this index
+    filteredCommits = commits.slice(0, safeIdx + 1);
 
-    // Safety: never be completely empty
-    if (filteredCommits.length === 0) {
-      const earliest = d3.least(commits, d => d.datetime);
-      filteredCommits = earliest ? [earliest] : [];
-    }
+    const filteredLines = filteredCommits.flatMap(d => d.lines || []);
 
-    // Update the scatterplot for this subset
-    if (filteredCommits.length > 0) {
-      updateScatterPlot(filteredCommits);
-    }
+    updateScatterPlot(filteredCommits);
+    renderCommitInfo(filteredLines, filteredCommits);
+    updateFileDisplay(filteredCommits);
   }
 
-  // Live update while dragging
   slider.addEventListener("input", onTimeSliderChange);
 
-  // Initial value: full history
-  slider.value = String(commitProgress);
+  // Start at "full history" (last commit)
+  slider.value = String(commits.length - 1);
   onTimeSliderChange();
 }
 
