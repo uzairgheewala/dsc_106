@@ -196,6 +196,21 @@ form button {
     gap: 0.25rem;
 }
 
+/* .projects article {
+    border: 1px solid oklch(90% 3% 200);
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+} */
+
+/* make sure images never overlap text */
+.projects article img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
 .proj-year {
     opacity: 0.7;
     font-variant-numeric: oldstyle-nums;

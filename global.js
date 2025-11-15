@@ -186,7 +186,11 @@ export function renderProjects(projects, container, headingTag = "h2") {
     const card = document.createElement("article");
     card.className = "project-card";
 
-    // Title (with optional link)
+    // --- TEXT BLOCK -------------------------------------------------
+    const textBlock = document.createElement("div");
+    textBlock.className = "proj-text";
+
+    // Title (optionally linked)
     const titleEl = document.createElement(headingTag);
     if (p.url) {
       const link = document.createElement("a");
@@ -198,39 +202,44 @@ export function renderProjects(projects, container, headingTag = "h2") {
     } else {
       titleEl.textContent = p.title;
     }
-    card.appendChild(titleEl);
+    textBlock.appendChild(titleEl);
 
-    // Year
+    // Year (use .proj-year so existing CSS applies)
     if (p.year) {
-      const meta = document.createElement("p");
-      meta.className = "project-meta";
-      meta.textContent = p.year;
-      card.appendChild(meta);
-    }
-
-    // Image (optionally clickable)
-    if (p.image) {
-      const img = document.createElement("img");
-      img.src = p.image;
-      img.alt = p.title;
-
-      if (p.url) {
-        const imgLink = document.createElement("a");
-        imgLink.href = p.url;
-        imgLink.target = "_blank";
-        imgLink.rel = "noopener noreferrer";
-        imgLink.appendChild(img);
-        card.appendChild(imgLink);
-      } else {
-        card.appendChild(img);
-      }
+      const yearEl = document.createElement("p");
+      yearEl.className = "proj-year";
+      yearEl.textContent = p.year;
+      textBlock.appendChild(yearEl);
     }
 
     // Description
     if (p.description) {
       const desc = document.createElement("p");
       desc.textContent = p.description;
-      card.appendChild(desc);
+      textBlock.appendChild(desc);
+    }
+
+    card.appendChild(textBlock);
+
+    // --- IMAGE BLOCK ------------------------------------------------
+    if (p.image) {
+      const img = document.createElement("img");
+      img.src = resolveAsset(p.image);      // << important (see section 2)
+      img.alt = p.title;
+      img.loading = "lazy";
+      img.decoding = "async";
+
+      let imgNode = img;
+      if (p.url) {
+        const imgLink = document.createElement("a");
+        imgLink.href = p.url;
+        imgLink.target = "_blank";
+        imgLink.rel = "noopener noreferrer";
+        imgLink.appendChild(img);
+        imgNode = imgLink;
+      }
+
+      card.appendChild(imgNode);
     }
 
     container.appendChild(card);
