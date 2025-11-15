@@ -177,34 +177,63 @@ export async function fetchJSON(url) {
  * @param {HTMLElement} container - where to render
  * @param {string} headingLevel - "h2" | "h3" | ...
  */
-export function renderProjects(projects, container, headingLevel = "h2") {
-  if (!container) { console.warn("renderProjects: container not found"); return; }
-  const validHeading = /^h[1-6]$/.test(headingLevel) ? headingLevel : "h2";
+export function renderProjects(projects, container, headingTag = "h2") {
+  if (!container || !Array.isArray(projects)) return;
 
   container.innerHTML = "";
 
-  if (!Array.isArray(projects) || projects.length === 0) {
-    container.innerHTML = `<p>No projects to display yet.</p>`;
-    return;
-  }
-
   for (const p of projects) {
-    const article = document.createElement("article");
-    const safeTitle = p?.title ?? "Untitled Project";
-    const rawImg    = p?.image ?? "https://vis-society.github.io/labs/2/images/empty.svg";
-    const safeImg   = resolveAsset(rawImg);
-    const safeDesc  = p?.description ?? "";
-    const safeYear  = p?.year ?? "—";
+    const card = document.createElement("article");
+    card.className = "project-card";
 
-    article.innerHTML = `
-      <${validHeading}>${safeTitle}</${validHeading}>
-      <img src="${safeImg}" alt="${safeTitle}">
-      <div class="proj-text">
-        <p>${safeDesc}</p>
-        <p class="proj-year" aria-label="Project year">${safeYear}</p>
-      </div>
-    `;
-    container.appendChild(article);
+    // Title (with optional link)
+    const titleEl = document.createElement(headingTag);
+    if (p.url) {
+      const link = document.createElement("a");
+      link.href = p.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = p.title;
+      titleEl.appendChild(link);
+    } else {
+      titleEl.textContent = p.title;
+    }
+    card.appendChild(titleEl);
+
+    // Year
+    if (p.year) {
+      const meta = document.createElement("p");
+      meta.className = "project-meta";
+      meta.textContent = p.year;
+      card.appendChild(meta);
+    }
+
+    // Image (optionally clickable)
+    if (p.image) {
+      const img = document.createElement("img");
+      img.src = p.image;
+      img.alt = p.title;
+
+      if (p.url) {
+        const imgLink = document.createElement("a");
+        imgLink.href = p.url;
+        imgLink.target = "_blank";
+        imgLink.rel = "noopener noreferrer";
+        imgLink.appendChild(img);
+        card.appendChild(imgLink);
+      } else {
+        card.appendChild(img);
+      }
+    }
+
+    // Description
+    if (p.description) {
+      const desc = document.createElement("p");
+      desc.textContent = p.description;
+      card.appendChild(desc);
+    }
+
+    container.appendChild(card);
   }
 }
 

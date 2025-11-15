@@ -1,5 +1,12 @@
 [
   {
+    "title": "Boston Bikewatching",
+    "year": "2025",
+    "image": "../images/bikewatching.png",
+    "url": "https://uzairgheewala.github.io/Boston-Bike-Watching/",
+    "description": "Interactive Mapbox + D3 visualization of Boston-area Bluebikes stations, bike lanes, and time-filtered traffic flow."
+  },
+  {
     "title": "CNN — Recognizing numbers from hand signs",
     "year": "2019",
     "image": "../images/CNN_num_handsign.gif",
@@ -9,54 +16,63 @@
     "title": "Mandelbrot Set Viewer",
     "year": "2021",
     "image": "../images/mandelbrot.png",
+    "url": "https://uzairgheewala.com/mandelbrot/",
     "description": "A simple interactive Mandelbrot set viewer with pan/zoom for exploring complex-plane structure."
   },
   {
     "title": "AutoMeet",
     "year": "2020",
     "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+    "url": "https://github.com/uzairgheewala/AutoMeet/",
     "description": "Windows app to store class meeting times and automatically launch Zoom meetings on schedule."
   },
   {
     "title": "Pi Approximator",
     "year": "2020",
     "image": "../images/pi.png",
+    "url": "https://uzairgheewala.com/pi/",
     "description": "Interactive visualizer of the Monte Carlo circle method to estimate π."
   },
   {
     "title": "Interactive Chaos Theory",
     "year": "2022",
     "image": "../images/chaos.png",
+    "url": "https://uzairgheewala.com/chaos/",
     "description": "Interactive visualizers for chaotic systems (e.g., Lorenz Attractor, double pendulum)."
   },
   {
     "title": "Fourier Transform Visualizer",
     "year": "2022",
     "image": "../images/fourier.png",
+    "url": "https://uzairgheewala.com/fourier/",
     "description": "Interactive demo showing how Fourier transforms affect different signals."
   },
   {
     "title": "Lottery Simulator",
     "year": "2022",
     "image": "../images/lottery.png",
+    "url": "https://uzairgheewala.com/lottery/",
     "description": "Simulate multiple lottery designs with custom conditions to explore expected outcomes."
   },
   {
     "title": "ZSuite (Zeros Explorer)",
     "year": "2022",
     "image": "../images/zeta.png",
+    "url": "https://uzairgheewala.com/zsuite/",
     "description": "A suite of visualizers and interactive apps for exploring the Riemann zeta function."
   },
   {
     "title": "Interactive Game Theory",
     "year": "2022",
     "image": "../images/game_theory.png",
+    "url": "https://uzairgheewala.com/game_theory/",
     "description": "Interactive app to simulate strategies in classic games such as the Prisoners’ Dilemma."
   },
   {
     "title": "HDLOpt — Automated HDL Unit-Level Verification Suite",
     "year": "2024",
     "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+    "url": "https://github.com/uzairgheewala/hdlopt/",
     "description": "Open-source suite for unit-level HDL verification with smart testbench generation, resource/timing/power/netlist/waveform analysis pipelines, and CI integrations. Lays groundwork for automated UVM testbench generation and simulation."
   },
   {
@@ -69,6 +85,7 @@
     "title": "Street Maps Pathfinding",
     "year": "2023",
     "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+    "url": "https://uzairgheewala.com/pathfinding/",
     "description": "Pathfinding on real-world street maps with efficient graph search and interactive UI."
   }
 ]
