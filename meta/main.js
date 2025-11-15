@@ -4,6 +4,10 @@ let xScaleGlobal = null;
 let yScaleGlobal = null;
 let commitsGlobal = null;
 
+let commitProgress = 100;     // 0–100
+let commitMaxTime = null;     // Date
+let filteredCommits = null;   // subset of commits based on slider
+
 async function loadData() {
   const data = await d3.csv("loc.csv", (row) => ({
     ...row,
@@ -206,11 +210,13 @@ function renderScatterPlot(data, commits) {
   svg
     .append("g")
     .attr("transform", `translate(0, ${usableArea.bottom})`)
+    .attr("class", "x-axis") // NEW: mark x-axis group
     .call(xAxis);
 
   svg
     .append("g")
     .attr("transform", `translate(${usableArea.left}, 0)`)
+    .attr("class", "y-axis") // for consistency
     .call(yAxis);
 
   // Dots group
@@ -218,7 +224,7 @@ function renderScatterPlot(data, commits) {
 
   dots
     .selectAll("circle")
-    .data(sortedCommits)
+    .data(sortedCommits, d => d.id)
     .join("circle")
     .attr("cx", d => xScale(d.datetime))
     .attr("cy", d => yScale(d.hourFrac))
@@ -246,6 +252,107 @@ function renderScatterPlot(data, commits) {
 
   // Bring dots and axes above the overlay so tooltips still work
   svg.selectAll(".dots, .overlay ~ *").raise();
+}
+
+function updateScatterPlot(commitsSubset) {
+  const svg = d3.select("#chart").select("svg");
+  if (svg.empty() || !xScaleGlobal || !yScaleGlobal) return;
+
+  const width = 1000;
+  const height = 600;
+  const margin = { top: 10, right: 10, bottom: 30, left: 40 };
+  const usableArea = {
+    top: margin.top,
+    right: width - margin.right,
+    bottom: height - margin.bottom,
+    left: margin.left,
+    width: width - margin.left - margin.right,
+    height: height - margin.top - margin.bottom,
+  };
+
+  // 1) Update x-domain based on filtered commits
+  xScaleGlobal.domain(d3.extent(commitsSubset, d => d.datetime));
+
+  // 2) Recompute radius scale for subset
+  const [minLines, maxLines] = d3.extent(commitsSubset, d => d.totalLines);
+  const rScale = d3.scaleSqrt()
+    .domain([minLines || 1, maxLines || 1])
+    .range([3, 30]);
+
+  // 3) Redraw x-axis in place
+  const xAxis = d3.axisBottom(xScaleGlobal);
+  const xAxisGroup = svg.select("g.x-axis");
+  xAxisGroup.call(xAxis);
+
+  // 4) Update circles (sorted so small ones stay on top)
+  const dots = svg.select("g.dots");
+  const sortedCommits = d3.sort(commitsSubset, d => -d.totalLines);
+
+  dots
+    .selectAll("circle")
+    .data(sortedCommits, d => d.id)  // IMPORTANT: keep key!
+    .join("circle")
+    .attr("cx", d => xScaleGlobal(d.datetime))
+    .attr("cy", d => yScaleGlobal(d.hourFrac))
+    .attr("r", d => rScale(d.totalLines))
+    .attr("fill", "steelblue")
+    .style("fill-opacity", 0.7)
+    .on("mouseenter", (event, commit) => {
+      d3.select(event.currentTarget).style("fill-opacity", 1);
+      renderTooltipContent(commit);
+      updateTooltipVisibility(true);
+      updateTooltipPosition(event);
+    })
+    .on("mousemove", (event) => {
+      updateTooltipPosition(event);
+    })
+    .on("mouseleave", (event) => {
+      d3.select(event.currentTarget).style("fill-opacity", 0.7);
+      updateTooltipVisibility(false);
+    });
+}
+
+function initTimeSlider(data, commits) {
+  const slider = document.getElementById("commit-progress");
+  const timeEl = document.getElementById("commit-progress-time");
+  if (!slider || !timeEl) return;
+
+  // Map [minDate, maxDate] -> [0, 100]
+  const timeScale = d3
+    .scaleTime()
+    .domain(d3.extent(commits, d => d.datetime))
+    .range([0, 100]);
+
+  function onTimeSliderChange() {
+    commitProgress = Number(slider.value);
+    commitMaxTime = timeScale.invert(commitProgress);
+
+    timeEl.textContent = commitMaxTime.toLocaleString("en", {
+      dateStyle: "long",
+      timeStyle: "short",
+    });
+
+    // Filter commits up to commitMaxTime
+    filteredCommits = commits.filter(d => d.datetime <= commitMaxTime);
+
+    // Safety: never be completely empty
+    if (filteredCommits.length === 0) {
+      const earliest = d3.least(commits, d => d.datetime);
+      filteredCommits = earliest ? [earliest] : [];
+    }
+
+    // Update the scatterplot for this subset
+    if (filteredCommits.length > 0) {
+      updateScatterPlot(filteredCommits);
+    }
+  }
+
+  // Live update while dragging
+  slider.addEventListener("input", onTimeSliderChange);
+
+  // Initial value: full history
+  slider.value = String(commitProgress);
+  onTimeSliderChange();
 }
 
 function isCommitSelected(selection, commit) {
@@ -326,3 +433,7 @@ commitsGlobal = commits;
 
 renderCommitInfo(data, commits);
 renderScatterPlot(data, commits);
+
+// NEW: hook up slider after initial plot
+filteredCommits = commits.slice();  // start with all
+initTimeSlider(data, commits);
