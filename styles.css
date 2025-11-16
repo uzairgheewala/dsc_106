@@ -88,7 +88,7 @@ img {
 header,
 main,
 footer {
-    max-width: 70ch;
+    max-width: 100ch;
     margin: 1.5rem auto;
 }
 
@@ -532,31 +532,33 @@ circle.selected {
 #scrolly-1 {
     position: relative;
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
+    align-items: flex-start;
+    margin-block: 2rem;
 }
 
-#scrolly-1>* {
-    flex: 1;
-}
-
-/* Left column: narrative text */
+/* Left column: narrative text (a bit narrower) */
 #scatter-story {
     position: relative;
+    flex: 0 0 38%;
+    /* ~40% of the width */
+    max-width: 40ch;
 }
 
-/* Each narrative "step" */
 #scatter-story .step {
     margin-bottom: 4rem;
     line-height: 1.6;
 }
 
-/* Right column: sticky scatterplot */
+/* Right column: sticky chart + selection + files (wider) */
 #scatter-plot {
     position: sticky;
     top: 0;
     left: 0;
-    height: 60vh;
-    /* important so sticky works */
+    height: 90vh;
+    /* taller sticky area so chart + files breathe */
+    flex: 1 1 0;
+    /* take the rest of the space */
     display: flex;
     flex-direction: column;
 }
@@ -570,11 +572,19 @@ circle.selected {
     margin-block: 0.75rem 1rem;
 }
 
-/* Make file unit viz layout tidy (if not already) */
+/* File unit viz within the sticky column */
 #files {
     display: grid;
     grid-template-columns: 1fr 4fr;
-    gap: 0.5rem 1rem;
+    gap: 0.5rem 1.5rem;
+    margin-block: 0.5rem 0;
+
+    /* NEW: prevent it from endlessly pushing down */
+    max-height: 200rem;
+    /* tweak to taste (e.g., 14rem, 20rem, etc.) */
+    overflow-y: auto;
+    padding-right: 0.25rem;
+    /* breathing room so scrollbar doesn’t cover dots */
 }
 
 #files>div {
@@ -595,7 +605,14 @@ circle.selected {
     align-content: flex-start;
     gap: 0.15em;
     padding-top: 0.6em;
-    margin-left: 0;
+    margin: 0;
+}
+
+#files dt small {
+    display: block;
+    font-size: 0.8em;
+    opacity: 0.7;
+    margin-top: 0.15em;
 }
 
 /* Unit dots for file viz */
@@ -605,4 +622,21 @@ circle.selected {
     aspect-ratio: 1;
     background: var(--color, steelblue);
     border-radius: 50%;
+}
+
+/* Slightly more compact on very small screens */
+@media (max-width: 800px) {
+    #scrolly-1 {
+        flex-direction: column;
+    }
+
+    #scatter-story {
+        flex-basis: auto;
+        max-width: 100%;
+    }
+
+    #scatter-plot {
+        position: static;
+        height: auto;
+    }
 }
