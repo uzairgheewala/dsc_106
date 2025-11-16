@@ -1,4 +1,5 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
+import scrollama from "https://cdn.jsdelivr.net/npm/scrollama@3.2.0/+esm";
 
 let xScaleGlobal = null;
 let yScaleGlobal = null;
@@ -378,46 +379,107 @@ function updateFileDisplay(commitsSubset) {
     .attr("class", "loc");
 }
 
-function initTimeSlider(data, commits) {
+function applyCommitIndex(idx) {
+  if (!commitsGlobal || commitsGlobal.length === 0) return;
+
+  // Clamp index
+  idx = Math.max(0, Math.min(commitsGlobal.length - 1, idx));
+
+  commitProgress = idx;
+  const cutoffCommit = commitsGlobal[idx];
+  commitMaxTime = cutoffCommit.datetime;
+
   const slider = document.getElementById("commit-progress");
   const timeEl = document.getElementById("commit-progress-time");
-  if (!slider || !timeEl) return;
 
-  // Slider covers 0..(N-1) where N = number of commits
-  slider.min  = "0";
-  slider.max  = String(commits.length - 1);
-  slider.step = "1";
+  if (slider) {
+    slider.value = String(idx);
+  }
 
-  function onTimeSliderChange() {
-    const idx = Number(slider.value);
-
-    // Clamp defensively
-    const safeIdx = Math.min(Math.max(idx, 0), commits.length - 1);
-
-    const cutoffCommit = commits[safeIdx];
-    commitMaxTime = cutoffCommit.datetime;
-
+  if (timeEl) {
     timeEl.textContent = commitMaxTime.toLocaleString("en", {
       dateStyle: "long",
       timeStyle: "short",
     });
+  }
 
-    // Include commits up to and including this index
-    filteredCommits = commits.slice(0, safeIdx + 1);
+  // All commits up to and including this index
+  filteredCommits = commitsGlobal.slice(0, idx + 1);
+  const filteredLines = filteredCommits.flatMap(d => d.lines || []);
 
-    const filteredLines = filteredCommits.flatMap(d => d.lines || []);
-
+  if (filteredCommits.length > 0) {
     updateScatterPlot(filteredCommits);
     renderCommitInfo(filteredLines, filteredCommits);
     updateFileDisplay(filteredCommits);
+  }
+}
+
+function initTimeSlider(commits) {
+  const slider = document.getElementById("commit-progress");
+  const timeEl = document.getElementById("commit-progress-time");
+  if (!slider || !timeEl) return;
+
+  slider.min = "0";
+  slider.max = String(commits.length - 1);
+  slider.step = "1";
+
+  function onTimeSliderChange() {
+    const idx = Number(slider.value);
+    applyCommitIndex(idx);
   }
 
   slider.addEventListener("input", onTimeSliderChange);
 
   // Start at "full history" (last commit)
-  slider.value = String(commits.length - 1);
-  onTimeSliderChange();
+  applyCommitIndex(commits.length - 1);
 }
+
+// function initTimeSlider(data, commits) {
+//   const slider = document.getElementById("commit-progress");
+//   const timeEl = document.getElementById("commit-progress-time");
+//   if (!slider || !timeEl) return;
+
+//   // Slider goes from first commit (0) to last commit (N - 1)
+//   slider.min = "0";
+//   slider.max = String(commits.length - 1);
+//   slider.step = "1";
+
+//   function onTimeSliderChange() {
+//     // Index in commits array
+//     let idx = Number(slider.value);
+//     idx = Math.max(0, Math.min(commits.length - 1, idx));
+
+//     commitProgress = idx; // we can reuse this global as "current index"
+
+//     const cutoffCommit = commits[idx];
+//     commitMaxTime = cutoffCommit.datetime; // still useful elsewhere
+
+//     // Update label
+//     timeEl.textContent = commitMaxTime.toLocaleString("en", {
+//       dateStyle: "long",
+//       timeStyle: "short",
+//     });
+
+//     // All commits up to and including this one
+//     filteredCommits = commits.slice(0, idx + 1);
+
+//     // Lines for summary stats
+//     const filteredLines = filteredCommits.flatMap(d => d.lines || []);
+
+//     if (filteredCommits.length > 0) {
+//       updateScatterPlot(filteredCommits);
+//       renderCommitInfo(filteredLines, filteredCommits);
+//       updateFileDisplay(filteredCommits);
+//     }
+//   }
+
+//   // Live update while dragging
+//   slider.addEventListener("input", onTimeSliderChange);
+
+//   // Start at "full history" (last commit)
+//   slider.value = String(commits.length - 1);
+//   onTimeSliderChange();
+// }
 
 function isCommitSelected(selection, commit) {
   if (!selection || !xScaleGlobal || !yScaleGlobal) return false;
@@ -495,9 +557,71 @@ const commits = processCommits(data);
 
 commitsGlobal = commits;
 
-renderCommitInfo(data, commits);
+// renderCommitInfo(data, commits);
 renderScatterPlot(data, commits);
 
-// NEW: hook up slider after initial plot
-filteredCommits = commits.slice();  // start with all
-initTimeSlider(data, commits);
+// filteredCommits = commits.slice();  // start with all
+// updateFileDisplay(filteredCommits);
+
+// initTimeSlider(data, commits);
+
+d3.select("#scatter-story")
+  .selectAll(".step")
+  .data(commits)
+  .join("div")
+  .attr("class", "step")
+  .html((d, i) => {
+    const filesTouched = d3.rollups(
+      d.lines,
+      v => v.length,
+      line => line.file
+    ).length;
+
+    const when = d.datetime.toLocaleString("en", {
+      dateStyle: "full",
+      timeStyle: "short",
+    });
+
+    const commitLabel =
+      i === 0
+        ? "my first commit, and it was glorious"
+        : "another glorious commit";
+
+    return `
+      <p>
+        On <strong>${when}</strong>,
+        I made <a href="${d.url}" target="_blank" rel="noopener">
+        ${commitLabel}</a>.
+      </p>
+      <p>
+        I edited <strong>${d.totalLines}</strong> lines
+        across <strong>${filesTouched}</strong> file${filesTouched === 1 ? "" : "s"}.
+      </p>
+      <p>
+        Then I looked over all I had made, and I saw that it was very good.
+      </p>
+    `;
+  });
+
+// 3) Hook up the slider (this also calls applyCommitIndex for the last commit)
+initTimeSlider(commits);
+
+// 4) Set up Scrollama to drive the same updates on scroll
+function onStepEnter(response) {
+  const commit = response.element.__data__;
+  if (!commit || !commitsGlobal) return;
+
+  const idx = commitsGlobal.findIndex(c => c.id === commit.id);
+  if (idx >= 0) {
+    applyCommitIndex(idx);
+  }
+}
+
+const scroller = scrollama();
+scroller
+  .setup({
+    container: "#scrolly-1",
+    step: "#scrolly-1 .step",
+    offset: 0.6, // 60% of viewport height
+  })
+  .onStepEnter(onStepEnter);
