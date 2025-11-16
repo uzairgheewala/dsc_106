@@ -315,6 +315,69 @@ function updateScatterPlot(commitsSubset) {
     });
 }
 
+function updateFileDisplay(commitsSubset) {
+  const container = d3.select("#files");
+  if (container.empty()) return;
+
+  const commitsList = commitsSubset ?? [];
+  const lines = commitsList.flatMap(d => d.lines || []);
+
+  // If nothing to show, clear and bail
+  if (lines.length === 0) {
+    container.selectAll("*").remove();
+    return;
+  }
+
+  // Group by file and sort descending by number of lines
+  let files = d3
+    .groups(lines, d => d.file)
+    .map(([name, lines]) => ({
+      name,
+      lines,
+      type: lines[0]?.type, // first line’s type as file “technology”
+    }))
+    .sort((a, b) => b.lines.length - a.lines.length);
+
+  // Color scale by technology
+  const colors = d3.scaleOrdinal(d3.schemeTableau10);
+
+  // Outer “per-file” divs
+  const filesContainer = container
+    .selectAll("div")
+    .data(files, d => d.name) // key: file name
+    .join(
+      enter =>
+        enter.append("div").call(div => {
+          // structure:
+          // <div>
+          //   <dt><code>…</code><small>…</small></dt>
+          //   <dd>…dots…</dd>
+          // </div>
+          div.append("dt");
+          div.append("dd");
+        }),
+      update => update,
+      exit => exit.remove()
+    );
+
+  // Update dt: filename + line count
+  filesContainer.select("dt").html(d => `
+    <code>${d.name}</code>
+    <small>${d.lines.length} lines</small>
+  `);
+
+  // Set per-file CSS variable for color (used by .loc)
+  filesContainer.style("--color", d => colors(d.type || "other"));
+
+  // Inside each dd, render one .loc div per line
+  filesContainer
+    .select("dd")
+    .selectAll("div")
+    .data(d => d.lines)
+    .join("div")
+    .attr("class", "loc");
+}
+
 function initTimeSlider(data, commits) {
   const slider = document.getElementById("commit-progress");
   const timeEl = document.getElementById("commit-progress-time");
